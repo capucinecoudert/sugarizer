@@ -8,6 +8,10 @@ body{
 #canvas{
 	background-color: #5F9EA0;
 }
+#score{
+	color:white;
+	text-align: left;
+}
 div{
 	font-size: 150%;
 }

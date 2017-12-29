@@ -1,11 +1,14 @@
 define(["sugar-web/activity/activity"], function (activity) {
 
-	// Manipulate the DOM only when it is ready.
 	require(['domReady!'], function (doc) {
 		var div = document.getElementById("capitals");
         var answer_div = document.getElementById("answer");
         var result_div = document.getElementById("result");
-
+        var score_div = document.getElementById("score");
+		var myButton = document.getElementById("my-button");
+		var refreshButton = document.getElementById("refresh-button");
+		var score = 0;
+		var motRandom;
 		var capital = {
 			'Afghanistan':'Kabul',
 			'Albania':'Tirana',
@@ -27,7 +30,7 @@ define(["sugar-web/activity/activity"], function (activity) {
 			'Belize':'Belmopan',
 			'Benin':'Porto-Novo',
 			'Bhutan':'Thimphu',
-			'Bolivia':'Sucre (de jure) andLa Paz (seat of government)',
+			'Bolivia':'Sucre (de jure) and La Paz (seat of government)',
 			'Bosnia and Herzegovina':'Sarajevo',
 			'Botswana':'Gaborone',
 			'Brazil':'Brasilia',
@@ -204,28 +207,7 @@ define(["sugar-web/activity/activity"], function (activity) {
 			'Yemen':'Sana’a',
 			'Zambia':'Lusaka',
 			'Zimbabwe':'Harare',
-						
-
-
 		};
-
-
-        var Countries = Object.keys(capital);
-		var indexRandom = Math.floor(Math.random()*Countries.length);
-		var motRandom = Countries[indexRandom];
-		Countries.splice(indexRandom, 1);
-		var choices = [motRandom];
-		div.innerHTML += "<p>What is the capital of " + motRandom+ " ?</p>";
-
-
-		var i = 1;    
-		while(i <= 3  )  
-		{ 	i=i+1;
-			var other_indexRandom = Math.floor(Math.random()*Countries.length);
-			var others_capitals = Countries[other_indexRandom];
-			Countries.splice(other_indexRandom, 1);
-            choices.push(others_capitals);
-        }
 
 		function shuffleArray(array) {
 		    for (var i = array.length - 1; i > 0; i--) {
@@ -234,26 +216,54 @@ define(["sugar-web/activity/activity"], function (activity) {
 		        array[i] = array[j];
 		        array[j] = temp;
 		    }
-		}
-        shuffleArray(choices);
+		};
 
-        for (var i in choices) {
-		    div.innerHTML += 
-		    '<INPUT type="radio" name="results" value="' + capital[choices[i]]+'">'+ capital[choices[i]];
-        }
+		function refresh() {
+	        var Countries = Object.keys(capital);
+			var indexRandom = Math.floor(Math.random()*Countries.length);
+		    motRandom = Countries[indexRandom];
+			Countries.splice(indexRandom, 1);
+			var choices = [motRandom];
+			div.innerHTML = "<p>What is the capital of " + motRandom+ " ?</p>";
+			score_div.innerHTML= "Score : "+ score;
+
+			var i = 1;    
+			while(i <= 3  )  
+			{ 	i=i+1;
+				var other_indexRandom = Math.floor(Math.random()*Countries.length);
+				var others_capitals = Countries[other_indexRandom];
+				Countries.splice(other_indexRandom, 1);
+	            choices.push(others_capitals);
+	        }
+			shuffleArray(choices);
+
+	        for (var i in choices) {
+			    div.innerHTML += 
+			    '<INPUT type="radio" name="results" value="' + capital[choices[i]]+'">'+ capital[choices[i]];
+	        }
+		};
 
 
-		var myButton = document.getElementById("my-button");
+
 		myButton.onclick = function () {
 			var choice = document.querySelector('input[name="results"]:checked').value;
 		   		answer_div.innerHTML="You clicked: "+choice;
 			if (choice == capital[motRandom]){
 				result_div.innerHTML=" Yes! The capital of " + motRandom + " is " + choice + "."
+				score += 1;
+				score_div.innerHTML= "Score : "+ score;
 			}else{
 				result_div.innerHTML="Your answer is wrong. Try again !"
+			}
 		};
-		}
 
 
+
+		refreshButton.onclick = function(){
+			refresh();
+		};
+
+        refresh();
+		
     });
 });
